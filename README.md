@@ -4,6 +4,20 @@ Handknack is an Excel add-in that lets you work with your database data directly
 
 <!-- Purpose / who it is for: add here. -->
 
+## Installing
+Download: [Handknack](https://github.com/Handknack/handknack.github.io/releases/download/1.0.0-beta/Handknack.1.0.0-beta.zip)
+
+1. **Unblock.** Before extracting the files. Go to **Properties** -> Check **Unblock** -> **Apply** to prevent Windows from blocking the installation.
+2. **Extract.** Extract the files to a suitable location.
+3. **Close Excel.** Close any open instance of Excel.
+4. **Install.** Double-click the *setup.exe* to initialize the installer,  go through the steps.
+5. **Done.** Open Excel and go to the *Handknack* tab to start using the addin.
+**Alternatively.** If the tab does not appear:
+6. **Excel.** Go to **File** -> **Options** -> **Add-ins**
+7. **Manage.** In the **Manage** dropdown. Select *COM Add-ins* and press **Go...**
+8. **Handknack.** Check *Handknack* in the list and press **OK**
+9. **Reopen Excel.** Close all open instances of Excel and then open Excel again to access the tab
+
 ## Getting started
 
 1. **Connect.** On the Handknack tab, choose the button for a new connection. Enter the server, pick a database and sign in. Windows, SQL and Microsoft Entra ID sign-in are supported.
