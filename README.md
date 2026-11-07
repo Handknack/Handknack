@@ -5,7 +5,7 @@ Handknack is an Excel add-in that lets you work with your database data directly
 <!-- Purpose / who it is for: add here. -->
 
 ## Installing
-Download: [Handknack](https://github.com/Handknack/handknack.github.io/releases/download/1.0.0-beta/Handknack.1.0.0-beta.zip)
+Download: [Handknack 1.0.0-beta.zip](https://github.com/Handknack/handknack.github.io/releases/download/1.0.0-beta/Handknack.1.0.0-beta.zip)
 
 1. **Unblock.** Before extracting the files. Go to **Properties** -> Check **Unblock** -> **Apply** to prevent Windows from blocking the installation.
 2. **Extract.** Extract the files to a suitable location.
