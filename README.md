@@ -14,7 +14,9 @@ Download: [Handknack 1.0.0-beta.zip](https://github.com/Handknack/handknack.gith
 5. **Done.** Open Excel and go to the *Handknack* tab to start using the addin.
 
 **Alternatively.** If the tab does not appear:
-6. **Excel.** Go to **File** -> **Options** -> **Add-ins**
+<ol start="6">
+<li>**Excel.** Go to **File** -> **Options** -> **Add-ins**</li>
+</ol>
 7. **Manage.** In the **Manage** dropdown. Select *COM Add-ins* and press **Go...**
 8. **Handknack.** Check *Handknack* in the list and press **OK**
 9. **Reopen Excel.** Close all open instances of Excel and then open Excel again to access the tab
