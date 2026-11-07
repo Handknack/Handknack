@@ -19,7 +19,7 @@ Each worksheet has its own connection and its own table, so one workbook can sho
 
 | Control | What it does |
 |---|---|
-| Object dropdown | Switch the sheet to another table or object from the same connection. You are asked before the current table is replaced. |
+| Object dropdown | Switch the sheet to another table or object from the same connection. |
 | Refresh objects | Reloads the list of objects from the database, for example after something new was added. |
 | Move table | Moves the table to another place on the sheet. |
 | Manage connection | Change the server, database or sign-in for the current sheet. |
