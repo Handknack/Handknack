@@ -78,11 +78,15 @@ In order to prepare the database for user access, you as a developer need to do 
 
 ### Tables
 
+#### Primary key
+
 When you create tables, meant for user editing, it needs to follow some standards. By default they need to be prefixed with *t*. Use *meta.affix* to set your own standard.
 
 The first column always has to be a unique *PRIMARY KEY*.
 
 The add-in supports both SQL Server and Fabric Warehouse *IDENTITY* columns (INT, BIGINT) along with GUID. In case of GUID the add-in creates a new id when the user adds new rows to the table, so no default is required.
+
+#### Foreign key
 
 If your table includes ID:s or codes, you might wanna present the user with friendlier names or values.
 
