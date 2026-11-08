@@ -105,10 +105,10 @@ In these cases you can create stored procedures by your design. You need to crea
 These need to follow the set naming convention and be created in the same schema as the table. 
 
 By default (excluding the table prefix and/or suffix): 
-* \*<schema>.<table_name>*
-* \*<schema>.<table_name>_delete*
-* \*<schema>.<table_name>_insert*
-* \*<schema>.<table_name>_update*
+* *`<schema>.<table_name>`*
+* *`<schema>.<table_name>_delete`*
+* *`<schema>.<table_name>_insert`*
+* *`<schema>.<table_name>_update`*
 
 Use *meta.affix* to set your own standards.
 
