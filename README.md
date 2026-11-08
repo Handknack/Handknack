@@ -108,7 +108,7 @@ By default (excluding the table prefix and/or suffix):
 * *<schema>.<table_name>*
 * *<schema>.<table_name>_delete*
 * *<schema>.<table_name>_insert*
-* *<schema>.<table_name>_update*.
+* *<schema>.<table_name>_update*
 Use *meta.affix* to set your own standards.
 
 The **SELECT** procedure must always include the **PRIMARY KEY**.
