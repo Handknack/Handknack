@@ -23,7 +23,7 @@ Download: [Handknack 1.0.0-beta.zip](https://github.com/Handknack/handknack.gith
 ## Getting started
 
 1. **Connect.** On the Handknack tab, choose the button for a new connection. Enter the server, pick a database and sign in. Windows, SQL and Microsoft Entra ID sign-in are supported.
-2. **Pick what to load.** The wizard lists everything you can open in that database. Use the filters to narrow the list by schema or type, and click a column header to sort (click once for ascending, twice for descending, a third time for the original order).
+2. **Pick what to load.** The wizard lists everything you can open in that database. Use the filters to narrow the list by schema or type, and click a column header to sort.
 3. **Choose where it goes.** Select the cell where the table should start. The data appears as an Excel table.
 4. **Edit.** Change cells, add rows at the bottom, or delete rows.
 5. **Save.** Send your changes to the database. New rows are added, changed rows are updated and deleted rows are removed.
@@ -71,6 +71,134 @@ In `meta.alias`, each row has an object, optionally a column, the new name (`Ali
 - A column that references another table is by default named after the column it shows, unless you give it a different alias.
 
 By default Handknack follows Excel's display language. Choose a language in the language menu to override it, or choose Automatic to go back. Only languages that actually have names in the database are listed. Changes made in the meta tables are picked up when you refresh the object list.
+
+## Developer guide
+
+In order to prepare the database for user access, you as a developer need to do some set up.
+
+### Tables
+
+When you create tables, meant for user editing, it needs to follow some standards. By default they need to be prefixed with *t*. Use *meta.affix* to set your own standard.
+The first column always has to be a unique *PRIMARY KEY*. 
+The add-in supports both SQL Server and Fabric Warehouse *IDENTITY* columns (INT, BIGINT) along with GUID. In case of GUID the add-in creates a new id when the user adds new rows to the table, so no default is required.
+
+If your table includes ID:s or codes, you might wanna present the user with friendlier names or values.
+Create a support table with the same standard as the main table. In the main table, make sure to add a *FOREIGN KEY* that references your *PRIMARY KEY* in the support table.
+The add-in will automatically identify the relationship and create a *validation list * in the Excel table. The values defaults to the second column in your support table. Use *meta.reference* to specify another column.
+When the user saves, the friendly name is replaced by its corresponding ID and that is stored in the main table.
+
+### Stored Procedures
+
+There will probably be cases where you don't want to expose everything for the users in a table (e.g. meta columns like update information).
+In these cases you can create stored procedures by your design. You need to create one procedure for every operation (**SELECT**, **DELETE**, **INSERT** & **UPDATE**).
+These need to follow the set naming convention and be created in the same schema as the table. By default (excluding the table prefix and/or suffix) *<schema>.<table_name>*, *<schema>.<table_name>_delete*, *<schema>.<table_name>_insert* and *<schema>.<table_name>_update*. Use *meta.affix* to set your own standards.
+
+The **SELECT** procedure must always include the **PRIMARY KEY**.
+
+```
+CREATE PROCEDURE [<schema>].[<table_name>]
+AS
+BEGIN
+SELECT [ID], [<column1>], [<column2>] ...
+  FROM <schema>.[t<table_name>]
+END
+```
+
+The **DELETE** procedure only needs the **PRIMARY KEY**.
+
+```
+CREATE PROCEDURE [<schema>].[<table_name>_delete]
+@ID <INT | BIGINT | UNIQUEIDENTIFIER>
+AS
+BEGIN
+DELETE
+  FROM [<schema>].[t<table_name>]
+ WHERE [ID] = @ID
+END
+```
+
+The **INSERT** procedure should include all fields that your users can manually input. The **PRIMARY KEY** does **NOT** need to be included, but will work if specified.
+
+```
+CREATE PROCEDURE [<schema>].[<table_name>_insert]
+@<column1> <data_type>,
+@<column2> <data_type>,
+...
+AS
+BEGIN
+INSERT INTO [<schema>].[t<table_name>] ([<column1>],[<column2>], ...)
+VALUES(@<column1>, @<column2>, ...)
+END
+```
+
+The **UPDATE** procedure needs to include the **PRIMARY KEY** and any fields your users should be able to edit.
+
+```
+CREATE PROCEDURE [<schema>].[<table_name>_update]
+@ID <INT | BIGINT | UNIQUEIDENTIFIER>,
+@column1 <data_type>,
+@column2 <data_type>,
+...
+AS
+BEGIN
+UPDATE [<schema>].[t<table_name>]
+   SET [<column1>] = @<column1>, [<column2>] = @<column2>, ...
+ WHERE [ID] = @ID
+END
+```
+
+**Optionally** you can add your own logic to the procedures if you want more control with row level security or limit what users can edit in any other way.
+
+### Permissions
+
+To set the right permissions, start by creating the roles/users and assign members for your different groups.
+
+#### Meta tables
+
+If you are making use of the meta tables, all users of the add-in have to be permitted to query them.
+Assuming you don't want the users to edit the meta settings themselves, only grant those roles and users the **SELECT** permission on the meta objects.
+This allows users to get the right objects, aliases and references when connecting to the database, but hides the meta tables in the interface.
+
+```
+GRANT SELECT ON OBJECT::meta.affix TO <role_name | user_name>;
+GRANT SELECT ON OBJECT::meta.alias TO <role_name | user_name>;
+GRANT SELECT ON OBJECT::meta.reference TO <role_name | user_name>;
+```
+
+### Tables
+
+If you're letting users edit tables as is, only grant the relevant operations so they can't make edits to the objects themselves.
+For the table to appear in their list, they also have to be granted the **VIEW DEFINITION** permission.
+
+```
+GRANT VIEW DEFINITION ON OBJECT::[<schema>].[t<table_name>] TO <role_name | user_name>;
+GRANT SELECT ON OBJECT::[<schema>].[t<table_name>] TO <role_name | user_name>;
+GRANT DELETE ON OBJECT::[<schema>].[t<table_name>] TO <role_name | user_name;
+GRANT INSERT ON OBJECT::[<schema>].[t<table_name>] TO <role_name | user_name>;
+GRANT UPDATE ON OBJECT::[<schema>].[t<table_name>] TO <role_name | user_name>;
+```
+
+### Stored procedures
+
+Stored procedures are the safest option. You need to grant the users the **EXECUTE** permission on the procedures.
+This allows them to run procedures but does not give any permission to interact with the underlying tables.
+
+```
+GRANT EXECUTE ON OBJECT::[<schema>].[<table_name>] TO <role_name | user_name>;
+GRANT EXECUTE ON OBJECT::[<schema>].[<table_name>_delete] TO <role_name | user_name>;
+GRANT EXECUTE ON OBJECT::[<schema>].[<table_name>_insert] TO <role_name | user_name>;
+GRANT EXECUTE ON OBJECT::[<schema>].[<table_name>_update] TO <role_name | user_name>;
+```
+
+### Support tables
+
+In order for the validation lists to work in Excel, the users need to be able to query the support tables.
+If you want users to manage these tables as well. Add the same permissions as for the main table or create corresponding procedures to handle the operations.
+Otherwise, if you want to manage these yourself, only grant the **SELECT** permission.
+
+```
+GRANT SELECT ON OBJECT::[<schema>].[t<table_name>] TO <role_name | user_name>;
+```
 
 ## License
 
