@@ -102,7 +102,14 @@ There will probably be cases where you don't want to expose everything for the u
 
 In these cases you can create stored procedures by your design. You need to create one procedure for every operation (**SELECT**, **DELETE**, **INSERT** & **UPDATE**).
 
-These need to follow the set naming convention and be created in the same schema as the table. By default (excluding the table prefix and/or suffix) *<schema>.<table_name>*, *<schema>.<table_name>_delete*, *<schema>.<table_name>_insert* and *<schema>.<table_name>_update*. Use *meta.affix* to set your own standards.
+These need to follow the set naming convention and be created in the same schema as the table. 
+
+By default (excluding the table prefix and/or suffix): 
+* *<schema>.<table_name>*
+* *<schema>.<table_name>_delete*
+* *<schema>.<table_name>_insert*
+* *<schema>.<table_name>_update*.
+Use *meta.affix* to set your own standards.
 
 The **SELECT** procedure must always include the **PRIMARY KEY**.
 
