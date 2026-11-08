@@ -78,20 +78,27 @@ In order to prepare the database for user access, you as a developer need to do 
 
 ### Tables
 
-When you create tables, meant for user editing, it needs to follow some standards. By default they need to be prefixed with *t*. Use *meta.affix* to set your own standard. <br/>
-The first column always has to be a unique *PRIMARY KEY*. <br/>
-The add-in supports both SQL Server and Fabric Warehouse *IDENTITY* columns (INT, BIGINT) along with GUID. In case of GUID the add-in creates a new id when the user adds new rows to the table, so no default is required. <br/>
+When you create tables, meant for user editing, it needs to follow some standards. By default they need to be prefixed with *t*. Use *meta.affix* to set your own standard.
 
-If your table includes ID:s or codes, you might wanna present the user with friendlier names or values. <br/>
-Create a support table with the same standard as the main table. In the main table, make sure to add a *FOREIGN KEY* that references your *PRIMARY KEY* in the support table. <br/>
-The add-in will automatically identify the relationship and create a *validation list * in the Excel table. The values defaults to the second column in your support table. Use *meta.reference* to specify another column. <br/>
-When the user saves, the friendly name is replaced by its corresponding ID and that is stored in the main table. <br/>
+The first column always has to be a unique *PRIMARY KEY*.
+
+The add-in supports both SQL Server and Fabric Warehouse *IDENTITY* columns (INT, BIGINT) along with GUID. In case of GUID the add-in creates a new id when the user adds new rows to the table, so no default is required.
+
+If your table includes ID:s or codes, you might wanna present the user with friendlier names or values.
+
+Create a support table with the same standard as the main table. In the main table, make sure to add a *FOREIGN KEY* that references your *PRIMARY KEY* in the support table.
+
+The add-in will automatically identify the relationship and create a *validation list * in the Excel table. The values defaults to the second column in your support table. Use *meta.reference* to specify another column.
+
+When the user saves, the friendly name is replaced by its corresponding ID and that is stored in the main table.
 
 ### Stored Procedures
 
-There will probably be cases where you don't want to expose everything for the users in a table (e.g. meta columns like update information). <br/>
-In these cases you can create stored procedures by your design. You need to create one procedure for every operation (**SELECT**, **DELETE**, **INSERT** & **UPDATE**). <br/>
-These need to follow the set naming convention and be created in the same schema as the table. By default (excluding the table prefix and/or suffix) *<schema>.<table_name>*, *<schema>.<table_name>_delete*, *<schema>.<table_name>_insert* and *<schema>.<table_name>_update*. Use *meta.affix* to set your own standards. <br/>
+There will probably be cases where you don't want to expose everything for the users in a table (e.g. meta columns like update information).
+
+In these cases you can create stored procedures by your design. You need to create one procedure for every operation (**SELECT**, **DELETE**, **INSERT** & **UPDATE**).
+
+These need to follow the set naming convention and be created in the same schema as the table. By default (excluding the table prefix and/or suffix) *<schema>.<table_name>*, *<schema>.<table_name>_delete*, *<schema>.<table_name>_insert* and *<schema>.<table_name>_update*. Use *meta.affix* to set your own standards.
 
 The **SELECT** procedure must always include the **PRIMARY KEY**.
 
@@ -156,8 +163,9 @@ To set the right permissions, start by creating the roles/users and assign membe
 #### Meta tables
 
 If you are making use of the meta tables, all users of the add-in have to be permitted to query them. <br/>
-Assuming you don't want the users to edit the meta settings themselves, only grant those roles and users the **SELECT** permission on the meta objects. <br/>
-This allows users to get the right objects, aliases and references when connecting to the database, but hides the meta tables in the interface. <br/>
+Assuming you don't want the users to edit the meta settings themselves, only grant those roles and users the **SELECT** permission on the meta objects.
+
+This allows users to get the right objects, aliases and references when connecting to the database, but hides the meta tables in the interface.
 
 ```
 GRANT SELECT ON OBJECT::meta.affix TO <role_name | user_name>;
@@ -167,8 +175,9 @@ GRANT SELECT ON OBJECT::meta.reference TO <role_name | user_name>;
 
 ### Tables
 
-If you're letting users edit tables as is, only grant the relevant operations so they can't make edits to the objects themselves. <br/>
-For the table to appear in their list, they also have to be granted the **VIEW DEFINITION** permission. <br/>
+If you're letting users edit tables as is, only grant the relevant operations so they can't make edits to the objects themselves.
+
+For the table to appear in their list, they also have to be granted the **VIEW DEFINITION** permission.
 
 ```
 GRANT VIEW DEFINITION ON OBJECT::[<schema>].[t<table_name>] TO <role_name | user_name>;
@@ -180,8 +189,9 @@ GRANT UPDATE ON OBJECT::[<schema>].[t<table_name>] TO <role_name | user_name>;
 
 ### Stored procedures
 
-Stored procedures are the safest option. You need to grant the users the **EXECUTE** permission on the procedures. <br/>
-This allows them to run procedures but does not give any permission to interact with the underlying tables. <br/>
+Stored procedures are the safest option. You need to grant the users the **EXECUTE** permission on the procedures.
+
+This allows them to run procedures but does not give any permission to interact with the underlying tables.
 
 ```
 GRANT EXECUTE ON OBJECT::[<schema>].[<table_name>] TO <role_name | user_name>;
@@ -192,9 +202,11 @@ GRANT EXECUTE ON OBJECT::[<schema>].[<table_name>_update] TO <role_name | user_n
 
 ### Support tables
 
-In order for the validation lists to work in Excel, the users need to be able to query the support tables. <br/>
-If you want users to manage these tables as well. Add the same permissions as for the main table or create corresponding procedures to handle the operations. <br/>
-Otherwise, if you want to manage these yourself, only grant the **SELECT** permission. <br/>
+In order for the validation lists to work in Excel, the users need to be able to query the support tables.
+
+If you want users to manage these tables as well. Add the same permissions as for the main table or create corresponding procedures to handle the operations.
+
+Otherwise, if you want to manage these yourself, only grant the **SELECT** permission.
 
 ```
 GRANT SELECT ON OBJECT::[<schema>].[t<table_name>] TO <role_name | user_name>;
